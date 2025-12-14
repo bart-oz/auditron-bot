@@ -1,0 +1,16 @@
+:skip_checks:
+  - CheckPermitAttributes
+
+:skip_files:
+  - lib/tasks/
+
+:rails:
+  :verify_csrf_token: false
+
+:ignore_file: config/brakeman.ignore
+
+:report_format: json
+
+:confidence: 2
+
+:min_confidence: 1

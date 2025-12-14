@@ -65,7 +65,7 @@ jobs:
       - name: Setup database
         run: |
           bin/rails db:create
-          bin/rails db:schema:load
+          bin/rails db:migrate
 
       - name: Run tests with coverage
         run: bundle exec rspec --format progress --format RspecJunitFormatter --out tmp/rspec_results.xml
@@ -110,7 +110,7 @@ jobs:
   #     - name: Setup database
   #       run: |
   #         bin/rails db:create
-  #         bin/rails db:schema:load
+  #         bin/rails db:migrate
   #
   #     - name: Generate Swagger docs
   #       run: bundle exec rake rswag:specs:swaggerize

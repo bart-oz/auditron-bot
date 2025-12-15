@@ -1,0 +1,4 @@
+date,reference,amount,description
+2025-01-01,TXN001,100.00,Payment received
+2025-01-02,TXN002,250.50,Invoice payment
+2025-01-03,TXN003,75.25,Refund issued

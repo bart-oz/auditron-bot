@@ -160,5 +160,51 @@ RSpec.describe "Api::V1::Reconciliations", type: :request do
         end.not_to change(Reconciliation, :count)
       end
     end
+
+    context "with file uploads" do
+      let(:bank_file) { fixture_file_upload("spec/fixtures/files/valid.csv", "text/csv") }
+      let(:processor_file) { fixture_file_upload("spec/fixtures/files/valid.csv", "text/csv") }
+      let(:invalid_file) { fixture_file_upload("spec/fixtures/files/invalid.pdf", "application/pdf") }
+
+      it "creates reconciliation with attached files" do
+        params = {
+          reconciliation: {
+            status: "pending",
+            bank_file:,
+            processor_file:
+          }
+        }
+
+        expect do
+          post "/api/v1/reconciliations", params:, headers: auth_headers
+        end.to change(Reconciliation, :count).by(1)
+
+        expect(response).to have_http_status(:created)
+        json = response.parsed_body
+        expect(json["reconciliation"]["bank_file_attached"]).to be true
+        expect(json["reconciliation"]["processor_file_attached"]).to be true
+      end
+
+      it "creates reconciliation with only bank_file" do
+        params = { reconciliation: { status: "pending", bank_file: } }
+
+        post "/api/v1/reconciliations", params:, headers: auth_headers
+
+        expect(response).to have_http_status(:created)
+        json = response.parsed_body
+        expect(json["reconciliation"]["bank_file_attached"]).to be true
+        expect(json["reconciliation"]["processor_file_attached"]).to be false
+      end
+
+      it "rejects invalid file types" do
+        params = { reconciliation: { status: "pending", bank_file: invalid_file } }
+
+        post "/api/v1/reconciliations", params:, headers: auth_headers
+
+        expect(response).to have_http_status(:unprocessable_content)
+        json = response.parsed_body
+        expect(json["errors"]).to include("Bank file must be a CSV file")
+      end
+    end
   end
 end

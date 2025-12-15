@@ -106,4 +106,59 @@ RSpec.describe Reconciliation, type: :model do
       expect(reconciliation).to be_processing
     end
   end
+
+  describe "file validations" do
+    let(:reconciliation) { build(:reconciliation) }
+    let(:csv_file) { fixture_file_upload("spec/fixtures/files/valid.csv", "text/csv") }
+    let(:txt_file) { fixture_file_upload("spec/fixtures/files/valid.txt", "text/plain") }
+    let(:pdf_file) { fixture_file_upload("spec/fixtures/files/invalid.pdf", "application/pdf") }
+
+    context "with valid CSV files" do
+      it "accepts text/csv content type for bank_file" do
+        reconciliation.bank_file.attach(csv_file)
+        reconciliation.valid?
+        expect(reconciliation.errors[:bank_file]).to be_empty
+      end
+
+      it "accepts text/plain content type for processor_file" do
+        reconciliation.processor_file.attach(txt_file)
+        reconciliation.valid?
+        expect(reconciliation.errors[:processor_file]).to be_empty
+      end
+    end
+
+    context "with invalid file types" do
+      it "rejects PDF for bank_file" do
+        reconciliation.bank_file.attach(pdf_file)
+        reconciliation.valid?
+        expect(reconciliation.errors[:bank_file]).to include("must be a CSV file")
+      end
+
+      it "rejects PDF for processor_file" do
+        reconciliation.processor_file.attach(pdf_file)
+        reconciliation.valid?
+        expect(reconciliation.errors[:processor_file]).to include("must be a CSV file")
+      end
+    end
+  end
+
+  describe "#files_attached?" do
+    let(:reconciliation) { create(:reconciliation) }
+    let(:csv_file) { fixture_file_upload("spec/fixtures/files/valid.csv", "text/csv") }
+
+    it "returns false when no files attached" do
+      expect(reconciliation.files_attached?).to be false
+    end
+
+    it "returns false when only bank_file attached" do
+      reconciliation.bank_file.attach(csv_file)
+      expect(reconciliation.files_attached?).to be false
+    end
+
+    it "returns true when both files attached" do
+      reconciliation.bank_file.attach(csv_file)
+      reconciliation.processor_file.attach(csv_file)
+      expect(reconciliation.files_attached?).to be true
+    end
+  end
 end

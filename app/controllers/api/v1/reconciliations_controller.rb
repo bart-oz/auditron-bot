@@ -27,6 +27,9 @@ module Api
         authorize reconciliation
 
         if reconciliation.save
+          # Enqueue processing job if both files are attached
+          ReconciliationJob.perform_later(reconciliation.id) if reconciliation.files_attached?
+
           render json: { reconciliation: serialize_reconciliation(reconciliation) }, status: :created
         else
           render json: { errors: reconciliation.errors.full_messages }, status: :unprocessable_content

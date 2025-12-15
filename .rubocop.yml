@@ -87,6 +87,19 @@ RSpec/ContextWording:
     - unless
     - for
 
+RSpec/VerifiedDoubles:
+  Enabled: true
+  Exclude:
+    - 'spec/services/**/*'  # Mocking file objects without ActiveStorage
+
+RSpec/AnyInstance:
+  Enabled: true
+  Exclude:
+    - 'spec/jobs/**/*'  # Necessary for job testing with reloaded records
+
+RSpec/MessageSpies:
+  Enabled: false  # We prefer expect().not_to receive() pattern
+
 Performance/DeletePrefix:
   Enabled: true
 

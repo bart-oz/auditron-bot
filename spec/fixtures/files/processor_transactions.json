@@ -1,0 +1,32 @@
+{
+  "transactions": [
+    {
+      "id": "TX001",
+      "timestamp": "2023-04-01T09:15:32Z",
+      "amount_cents": 10000,
+      "merchant": "Payment One",
+      "status": "successful"
+    },
+    {
+      "id": "TX002",
+      "timestamp": "2023-04-02T14:22:05Z",
+      "amount_cents": 25050,
+      "merchant": "Payment Two",
+      "status": "successful"
+    },
+    {
+      "id": "TX003",
+      "timestamp": "2023-04-03T11:05:44Z",
+      "amount_cents": 7500,
+      "merchant": "Payment Three Discrepancy",
+      "status": "successful"
+    },
+    {
+      "id": "TX005",
+      "timestamp": "2023-04-05T16:30:27Z",
+      "amount_cents": 50000,
+      "merchant": "Processor Only Transaction",
+      "status": "successful"
+    }
+  ]
+}

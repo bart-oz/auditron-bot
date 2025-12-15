@@ -41,7 +41,7 @@ module Api
       end
 
       def reconciliation_params
-        params.expect(reconciliation: [:status])
+        params.expect(reconciliation: %i[status bank_file processor_file])
       end
 
       def pundit_user
@@ -59,6 +59,8 @@ module Api
           discrepancy_count: reconciliation.discrepancy_count,
           error_message: reconciliation.error_message,
           processed_at: reconciliation.processed_at,
+          bank_file_attached: reconciliation.bank_file.attached?,
+          processor_file_attached: reconciliation.processor_file.attached?,
           created_at: reconciliation.created_at,
           updated_at: reconciliation.updated_at
         }

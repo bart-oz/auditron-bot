@@ -58,3 +58,17 @@ detectors:
   InstanceVariableAssumption:
     exclude:
       - ApiKey  # @raw_token is set in before_validation callback
+      - Api::V1::BaseController  # @current_api_key set in before_action
+      - Api::V1::ReconciliationsController  # @reconciliation set in before_action
+
+  UncommunicativeModuleName:
+    exclude:
+      - Api::V1  # Standard API versioning convention
+
+  MissingSafeMethod:
+    exclude:
+      - Api::V1::BaseController  # authenticate_api_key! is Rails before_action convention
+
+  FeatureEnvy:
+    exclude:
+      - Api::V1::BaseController#extract_token_from_header  # Simple header parsing method

@@ -170,7 +170,7 @@ RSpec.describe "Api::V1::Reconciliations", type: :request do
 
     context "with file uploads" do
       let(:bank_file) { fixture_file_upload("spec/fixtures/files/valid.csv", "text/csv") }
-      let(:processor_file) { fixture_file_upload("spec/fixtures/files/valid.csv", "text/csv") }
+      let(:processor_file) { fixture_file_upload("spec/fixtures/files/processor_transactions.json", "application/json") }
       let(:invalid_file) { fixture_file_upload("spec/fixtures/files/invalid.pdf", "application/pdf") }
 
       it "creates reconciliation with attached files" do

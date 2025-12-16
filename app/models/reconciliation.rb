@@ -2,7 +2,8 @@
 
 class Reconciliation < ApplicationRecord
   # Allowed content types for uploaded files
-  ALLOWED_CONTENT_TYPES = ["text/csv", "text/plain", "application/csv"].freeze
+  BANK_FILE_CONTENT_TYPES = ["text/csv", "text/plain", "application/csv"].freeze
+  PROCESSOR_FILE_CONTENT_TYPES = ["application/json", "text/json", "text/plain"].freeze
 
   belongs_to :user
 
@@ -29,17 +30,25 @@ class Reconciliation < ApplicationRecord
   private
 
   def validate_file_content_types
-    validate_content_type(:bank_file)
-    validate_content_type(:processor_file)
+    validate_bank_file_content_type
+    validate_processor_file_content_type
   end
 
-  def validate_content_type(attachment_name)
-    attachment = public_send(attachment_name)
-    return unless attachment.attached?
+  def validate_bank_file_content_type
+    return unless bank_file.attached?
 
-    content_type = attachment.blob.content_type
-    return if ALLOWED_CONTENT_TYPES.include?(content_type)
+    content_type = bank_file.blob.content_type
+    return if BANK_FILE_CONTENT_TYPES.include?(content_type)
 
-    errors.add(attachment_name, "must be a CSV file")
+    errors.add(:bank_file, "must be a CSV file")
+  end
+
+  def validate_processor_file_content_type
+    return unless processor_file.attached?
+
+    content_type = processor_file.blob.content_type
+    return if PROCESSOR_FILE_CONTENT_TYPES.include?(content_type)
+
+    errors.add(:processor_file, "must be a JSON file")
   end
 end

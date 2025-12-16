@@ -111,16 +111,31 @@ RSpec.describe Reconciliation, type: :model do
     let(:reconciliation) { build(:reconciliation) }
     let(:csv_file) { fixture_file_upload("spec/fixtures/files/valid.csv", "text/csv") }
     let(:txt_file) { fixture_file_upload("spec/fixtures/files/valid.txt", "text/plain") }
+    let(:json_file) { fixture_file_upload("spec/fixtures/files/processor_transactions.json", "application/json") }
     let(:pdf_file) { fixture_file_upload("spec/fixtures/files/invalid.pdf", "application/pdf") }
 
-    context "with valid CSV files" do
-      it "accepts text/csv content type for bank_file" do
+    context "with valid bank file types" do
+      it "accepts text/csv content type" do
         reconciliation.bank_file.attach(csv_file)
         reconciliation.valid?
         expect(reconciliation.errors[:bank_file]).to be_empty
       end
 
-      it "accepts text/plain content type for processor_file" do
+      it "accepts text/plain content type" do
+        reconciliation.bank_file.attach(txt_file)
+        reconciliation.valid?
+        expect(reconciliation.errors[:bank_file]).to be_empty
+      end
+    end
+
+    context "with valid processor file types" do
+      it "accepts application/json content type" do
+        reconciliation.processor_file.attach(json_file)
+        reconciliation.valid?
+        expect(reconciliation.errors[:processor_file]).to be_empty
+      end
+
+      it "accepts text/plain content type" do
         reconciliation.processor_file.attach(txt_file)
         reconciliation.valid?
         expect(reconciliation.errors[:processor_file]).to be_empty
@@ -137,7 +152,19 @@ RSpec.describe Reconciliation, type: :model do
       it "rejects PDF for processor_file" do
         reconciliation.processor_file.attach(pdf_file)
         reconciliation.valid?
-        expect(reconciliation.errors[:processor_file]).to include("must be a CSV file")
+        expect(reconciliation.errors[:processor_file]).to include("must be a JSON file")
+      end
+
+      it "rejects JSON for bank_file" do
+        reconciliation.bank_file.attach(json_file)
+        reconciliation.valid?
+        expect(reconciliation.errors[:bank_file]).to include("must be a CSV file")
+      end
+
+      it "rejects CSV for processor_file" do
+        reconciliation.processor_file.attach(csv_file)
+        reconciliation.valid?
+        expect(reconciliation.errors[:processor_file]).to include("must be a JSON file")
       end
     end
   end

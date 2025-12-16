@@ -17,13 +17,13 @@ module Api
       def index
         authorize Reconciliation
         reconciliations = policy_scope(Reconciliation).recent
-        render_success({ reconciliations: reconciliations.map { |r| serialize_reconciliation(r) } })
+        render_success({ reconciliations: reconciliations.map { |r| ReconciliationSerializer.call(r) } })
       end
 
       # GET /api/v1/reconciliations/:id
       def show
         authorize @reconciliation
-        render_success({ reconciliation: serialize_reconciliation(@reconciliation) })
+        render_success({ reconciliation: ReconciliationSerializer.call(@reconciliation) })
       end
 
       # POST /api/v1/reconciliations
@@ -35,7 +35,7 @@ module Api
           # Enqueue processing job if both files are attached
           ReconciliationJob.perform_later(reconciliation.id) if reconciliation.files_attached?
 
-          render_success({ reconciliation: serialize_reconciliation(reconciliation) }, status: :created)
+          render_success({ reconciliation: ReconciliationSerializer.call(reconciliation) }, status: :created)
         else
           render_error(
             ErrorCodes::VALIDATION_ERROR,
@@ -58,24 +58,6 @@ module Api
 
       def pundit_user
         current_user
-      end
-
-      # Simple serializer - will be replaced with Blueprinter later
-      def serialize_reconciliation(reconciliation)
-        {
-          id: reconciliation.id,
-          status: reconciliation.status,
-          matched_count: reconciliation.matched_count,
-          bank_only_count: reconciliation.bank_only_count,
-          processor_only_count: reconciliation.processor_only_count,
-          discrepancy_count: reconciliation.discrepancy_count,
-          error_message: reconciliation.error_message,
-          processed_at: reconciliation.processed_at,
-          bank_file_attached: reconciliation.bank_file.attached?,
-          processor_file_attached: reconciliation.processor_file.attached?,
-          created_at: reconciliation.created_at,
-          updated_at: reconciliation.updated_at
-        }
       end
     end
   end

@@ -5,7 +5,6 @@ source "https://rubygems.org"
 ruby "3.4.7"
 
 gem "bcrypt", "3.1.20"
-gem "blueprinter", "1.2.1"
 gem "bootsnap", "1.19", require: false
 gem "csv", "3.3.5"
 gem "interactor", "3.2"

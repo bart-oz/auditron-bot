@@ -30,7 +30,7 @@ group :development, :test do
   gem "brakeman", "7.1.1", require: false
   gem "bullet", "~> 8.1"
   gem "bundler-audit", "0.9.3", require: false
-  gem "debug", "1.11.0"
+  gem "debug", "1.11.1"
   gem "factory_bot_rails", "6.5.1"
   gem "faker", "3.5.3"
   gem "reek", "6.5.0", require: false
